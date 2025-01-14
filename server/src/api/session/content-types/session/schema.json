@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sessions",
+  "info": {
+    "singularName": "session",
+    "pluralName": "sessions",
+    "displayName": "Session"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "lastMessage": {
+      "type": "text"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "sessions"
+    },
+    "messages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::message.message",
+      "mappedBy": "session"
+    }
+  }
+}
