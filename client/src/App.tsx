@@ -34,6 +34,11 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<AppLayout />} errorElement={<NotFound />}>
       <Route index element={<ProtectedRoute component={<Dashboard />} />} />
+      {/* Dashboard with session ID */}
+      <Route
+        path="chat/:sessionId"
+        element={<ProtectedRoute component={<Dashboard />} />}
+      />
       <Route path="auth" element={<Auth />} />
     </Route>
   )

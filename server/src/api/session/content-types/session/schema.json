@@ -4,7 +4,8 @@
   "info": {
     "singularName": "session",
     "pluralName": "sessions",
-    "displayName": "Session"
+    "displayName": "Session",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -16,15 +17,8 @@
     },
     "user": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "sessions"
-    },
-    "messages": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::message.message",
-      "mappedBy": "session"
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

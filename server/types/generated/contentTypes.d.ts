@@ -372,6 +372,7 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiMessageMessage extends Struct.CollectionTypeSchema {
   collectionName: 'messages';
   info: {
+    description: '';
     displayName: 'Message';
     pluralName: 'messages';
     singularName: 'message';
@@ -391,7 +392,6 @@ export interface ApiMessageMessage extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     senderType: Schema.Attribute.Enumeration<['USER', 'SERVER']>;
-    session: Schema.Attribute.Relation<'manyToOne', 'api::session.session'>;
     text: Schema.Attribute.Text;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -402,6 +402,7 @@ export interface ApiMessageMessage extends Struct.CollectionTypeSchema {
 export interface ApiSessionSession extends Struct.CollectionTypeSchema {
   collectionName: 'sessions';
   info: {
+    description: '';
     displayName: 'Session';
     pluralName: 'sessions';
     singularName: 'session';
@@ -420,13 +421,12 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
       'api::session.session'
     > &
       Schema.Attribute.Private;
-    messages: Schema.Attribute.Relation<'oneToMany', 'api::message.message'>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     user: Schema.Attribute.Relation<
-      'manyToOne',
+      'oneToOne',
       'plugin::users-permissions.user'
     >;
   };
@@ -919,7 +919,6 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
-    sessions: Schema.Attribute.Relation<'oneToMany', 'api::session.session'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

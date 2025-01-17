@@ -4,7 +4,8 @@
   "info": {
     "singularName": "message",
     "pluralName": "messages",
-    "displayName": "Message"
+    "displayName": "Message",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -13,12 +14,6 @@
   "attributes": {
     "text": {
       "type": "text"
-    },
-    "session": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::session.session",
-      "inversedBy": "messages"
     },
     "senderType": {
       "type": "enumeration",

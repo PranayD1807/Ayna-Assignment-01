@@ -8,15 +8,15 @@ import { ToastContainer } from "react-toastify";
 const AppLayout = () => {
   return (
     <React.Fragment>
-      <Box position="sticky" top="0" left="0" width="100%" zIndex="1000">
-        <Header />
-      </Box>
       <ToastContainer
         position="bottom-left"
         theme="dark"
         toastClassName="text-sm"
       />
-      <Box>
+      <Box position="sticky" top="0" left="0" width="100%" zIndex="1000">
+        <Header />
+      </Box>
+      <Box overflowY="auto" style={{ maxHeight: "calc(100vh - 80px)" }}>
         <Outlet />
       </Box>
     </React.Fragment>

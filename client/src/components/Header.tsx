@@ -41,6 +41,7 @@ const Header = () => {
   return (
     <chakra.header
       display="flex"
+      h="80px"
       flexDirection="row"
       alignItems="center"
       justifyContent="space-between"
