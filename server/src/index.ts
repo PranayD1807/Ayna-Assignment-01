@@ -1,5 +1,6 @@
-("use strict");
-const { Server } = require("socket.io"); // Use CommonJS syntax
+"use strict";
+const { Server } = require("socket.io");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   register(/*{ strapi }*/) {},
@@ -7,59 +8,88 @@ module.exports = {
   bootstrap(/*{ strapi }*/) {
     const io = new Server(strapi.server.httpServer, {
       cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
         methods: ["GET", "POST"],
         credentials: true,
       },
     });
 
     io.on("connection", function (socket) {
-      socket.on("join", ({ username, sessionId }) => {
-        console.log("user connected");
-        console.log("username is ", username);
-        if (username) {
-          socket.join(sessionId);
-        } else {
-          console.log("An error occurred");
-        }
-      });
+      const token = socket.handshake.auth.token;
+      const jwtSecret = process.env.JWT_SECRET;
 
-      socket.on("sendMessage", async (data) => {
-        const axios = require("axios");
-        const userMessageData = {
-          data: {
-            senderType: "USER",
-            text: data.text,
-            session: data.sessionId,
-          },
-        };
+      if (token) {
+        jwt.verify(token, jwtSecret, async (err, decoded) => {
+          if (err) {
+            socket.disconnect();
+            return;
+          }
 
-        const serverMessageData = {
-          ...userMessageData,
-          data: {
-            ...userMessageData.data,
-            senderType: "SERVER",
-          },
-        };
+          const user = await strapi
+            .query("plugin::users-permissions.user")
+            .findOne({
+              where: { id: decoded.id },
+            });
 
-        await axios
-          .post("http://localhost:1337/api/messages", userMessageData)
-          .then(() => {
-            socket.broadcast
-              .to(data.sessionId)
-              .emit("message", userMessageData);
-          })
-          .catch((e) => console.log("error", e.message));
+          if (user) {
+            socket.user = user;
 
-        await axios
-          .post("http://localhost:1337/api/messages", serverMessageData)
-          .then(() => {
-            socket.broadcast
-              .to(data.sessionId)
-              .emit("message", serverMessageData);
-          })
-          .catch((e) => console.log("error", e.message));
-      });
+            socket.on("join", ({ sessionId }) => {
+              socket.join(sessionId);
+            });
+
+            socket.on("sendMessage", async (data) => {
+              try {
+                const createdUserMessage = await strapi
+                  .documents("api::message.message")
+                  .create({
+                    data: {
+                      senderType: "USER",
+                      text: data.text,
+                      session: data.sessionId,
+                      user: socket.user.id,
+                    },
+                    status: "published",
+                  });
+
+                socket.broadcast
+                  .to(data.sessionId)
+                  .emit("message", createdUserMessage);
+
+                const createdServerMessage = await strapi
+                  .documents("api::message.message")
+                  .create({
+                    data: {
+                      senderType: "SERVER",
+                      text: data.text,
+                      session: data.sessionId,
+                      user: socket.user.id,
+                    },
+                    status: "published",
+                  });
+
+                socket.broadcast
+                  .to(data.sessionId)
+                  .emit("message", createdServerMessage);
+
+                await strapi.documents("api::session.session").update({
+                  documentId: data.sessionId,
+                  data: {
+                    lastMessage: data.text,
+                  },
+                  status: "published",
+                });
+              } catch (e) {
+                console.log("Error saving message:", e.message);
+              }
+            });
+          } else {
+            socket.disconnect();
+          }
+        });
+      } else {
+        socket.disconnect();
+      }
     });
   },
 };

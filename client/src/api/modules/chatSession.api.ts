@@ -4,7 +4,7 @@ import { ChatSession } from "@/models/ChatSession";
 import { handleApiError } from "../helper/error.helper";
 
 const chatSessionEndpoints = {
-  getAll: "sessions",
+  getAll: "sessions?sort[0]=createdAt:desc",
   get: "sessions/{id}",
   create: "sessions",
   update: "sessions/{id}",
