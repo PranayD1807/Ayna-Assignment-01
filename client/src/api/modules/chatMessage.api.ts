@@ -19,20 +19,40 @@ export interface CreateChatMessageData {
   user: string;
 }
 
+export interface PaginationParams {
+  page?: number;
+  pageSize?: number;
+}
+
+export interface PaginatedApiResponse<T> extends ApiResponse<T> {
+  meta?: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
 const chatMessageApi = {
-  getAll: async (sessionId: string): Promise<ApiResponse<ChatMessage[]>> => {
+  getAll: async (
+    sessionId: string,
+    { page = 1, pageSize = 10 }: PaginationParams = {}
+  ): Promise<PaginatedApiResponse<ChatMessage[]>> => {
     try {
-      const endpoint = chatMessageEndpoints.getAll.replace(
+      const endpoint = `${chatMessageEndpoints.getAll.replace(
         "{sessionId}",
         sessionId
-      );
+      )}&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
 
-      const response = await privateClient.get<ApiResponse<ChatMessage[]>>(
-        endpoint
-      );
+      const response = await privateClient.get<
+        PaginatedApiResponse<ChatMessage[]>
+      >(endpoint);
 
       return {
         data: response.data.data || [],
+        meta: response.data.meta,
       };
     } catch (err: unknown) {
       return handleApiError(err);

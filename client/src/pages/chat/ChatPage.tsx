@@ -103,34 +103,46 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
       {!sessionId && <NoChat onNewChat={onNewChat} />}
       {sessionId && !isLoading && (
         <VStack h="full" w="full">
-          <Box h="full" w="full" overflowY="scroll">
+          <Flex h="full" w="full" overflowY="scroll" direction="column-reverse">
             {/* Render messages */}
             {messages.map((msg, index) => (
               <Flex
                 alignItems="center"
                 w="full"
                 justifyContent={msg.senderType === "USER" ? "end" : "start"}
+                key={index}
               >
                 {msg.senderType === "SERVER" && (
                   <Avatar size="lg" src={serverProfileImg} mx={2} />
                 )}
-                <Box
-                  key={index}
-                  p={4}
-                  w="80%"
-                  bg={
-                    msg.senderType === "USER"
-                      ? "colorPalette.subtle"
-                      : "bg.emphasized"
-                  }
-                  borderRadius="md"
-                  my={2}
+                <VStack
+                  alignItems={msg.senderType === "USER" ? "end" : "start"}
                 >
-                  <Text>{msg.text}</Text>
-                </Box>
+                  <Box
+                    px={8}
+                    py={3}
+                    bg={
+                      msg.senderType === "USER"
+                        ? "colorPalette.subtle"
+                        : "bg.emphasized"
+                    }
+                    borderRadius="2xl"
+                    mt={2}
+                  >
+                    <Text>{msg.text}</Text>
+                  </Box>
+                  <Text mx={2} fontSize="xs">
+                    {new Date(msg.createdAt).toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    })}
+                  </Text>
+                </VStack>
               </Flex>
             ))}
-          </Box>
+          </Flex>
 
           <InputGroup
             w="full"
