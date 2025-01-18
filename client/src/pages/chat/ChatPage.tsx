@@ -67,12 +67,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
     });
 
     newSocket.on("connect", () => {
-      console.log(
-        "Socket connected! Socket ID: ",
-        newSocket.id,
-        ", Room ID: ",
-        sessionId
-      );
+      console.log("Joining room: ", sessionId);
       newSocket.emit("join", { sessionId });
     });
 
@@ -98,10 +93,6 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
     });
 
     setSocket(newSocket);
-
-    // return () => {
-    //   newSocket.disconnect();
-    // };
   }, [sessionId]);
 
   const sendMessage = () => {

@@ -58,6 +58,11 @@ module.exports = {
                 socket.emit("test_event", data);
               });
 
+              socket.on("leave", ({ sessionId }) => {
+                socket.leave(sessionId);
+                console.log(`Socket ${socket.id} left room ${sessionId}`);
+              });
+
               socket.on("sendMessage", async (data: MessageData) => {
                 try {
                   const createdUserMessage = await strapi
