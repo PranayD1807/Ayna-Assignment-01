@@ -86,7 +86,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
 
     newSocket.on("receive_message", (newMessage: ChatMessage) => {
       console.log("Received message:", newMessage);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessages((prevMessages) => [newMessage, ...prevMessages]);
     });
 
     newSocket.on("connect_error", (error) => {
@@ -99,9 +99,9 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
 
     setSocket(newSocket);
 
-    return () => {
-      newSocket.disconnect();
-    };
+    // return () => {
+    //   newSocket.disconnect();
+    // };
   }, [sessionId]);
 
   const sendMessage = () => {
