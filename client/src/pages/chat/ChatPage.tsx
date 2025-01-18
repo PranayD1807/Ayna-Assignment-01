@@ -63,16 +63,38 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
       auth: {
         token: localStorage.getItem("actkn"),
       },
+      query: { debug: true },
     });
 
     newSocket.on("connect", () => {
-      console.log("Socket connected:", newSocket.id);
+      console.log(
+        "Socket connected! Socket ID: ",
+        newSocket.id,
+        ", Room ID: ",
+        sessionId
+      );
       newSocket.emit("join", { sessionId });
     });
 
-    newSocket.on("message", (newMessage: ChatMessage) => {
+    newSocket.onAny((event, ...args) => {
+      console.log("Socket event:", event, "with args:", args);
+    });
+
+    newSocket.on("test_event", (data) => {
+      console.log(data);
+    });
+
+    newSocket.on("receive_message", (newMessage: ChatMessage) => {
       console.log("Received message:", newMessage);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
+
+    newSocket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    newSocket.on("error", (error) => {
+      console.error("Socket error:", error);
     });
 
     setSocket(newSocket);
@@ -169,7 +191,11 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
           </InputGroup>
         </VStack>
       )}
-      {sessionId && isLoading && <Spinner />}
+      {sessionId && isLoading && (
+        <Flex justifyContent="center" alignItems="center" w="full" h="full">
+          <Spinner size="xl" />
+        </Flex>
+      )}
     </Flex>
   );
 };
