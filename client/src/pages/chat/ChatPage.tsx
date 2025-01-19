@@ -71,25 +71,9 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
       newSocket.emit("join", { sessionId });
     });
 
-    newSocket.onAny((event, ...args) => {
-      console.log("Socket event:", event, "with args:", args);
-    });
-
-    newSocket.on("test_event", (data) => {
-      console.log(data);
-    });
-
     newSocket.on("receive_message", (newMessage: ChatMessage) => {
       console.log("Received message:", newMessage);
       setMessages((prevMessages) => [newMessage, ...prevMessages]);
-    });
-
-    newSocket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
-
-    newSocket.on("error", (error) => {
-      console.error("Socket error:", error);
     });
 
     setSocket(newSocket);
@@ -98,16 +82,13 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
   const sendMessage = () => {
     if (!socket || !message || !sessionId) return;
 
-    // Prepare the message data
     const messageData = {
       text: message,
       sessionId,
     };
 
-    // Send the message to the server
     socket.emit("sendMessage", messageData);
 
-    // Clear the message input
     setMessage("");
   };
 
@@ -165,7 +146,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
                 variant="subtle"
                 size="sm"
                 p={0}
-                onClick={sendMessage} // Trigger sendMessage on click
+                onClick={sendMessage}
               >
                 <GoPaperAirplane />
               </IconButton>
