@@ -3,7 +3,7 @@ import { logout } from "@/store/userSlice";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import queryString from "query-string";
 
-const prodUrl = "https://mellow-tools-backend.vercel.app/";
+const prodUrl = "https://playful-happiness-672a03754c.strapiapp.com/";
 const devUrl = "http://127.0.0.1:1337/";
 const hostUrl = import.meta.env.VITE_ENV == "PROD" ? prodUrl : devUrl;
 

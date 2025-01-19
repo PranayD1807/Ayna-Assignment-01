@@ -59,7 +59,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ onNewChat }) => {
   useEffect(() => {
     if (!sessionId) return;
 
-    const newSocket = io("http://localhost:1337", {
+    const newSocket = io("https://playful-happiness-672a03754c.strapiapp.com/", {
       auth: {
         token: localStorage.getItem("actkn"),
       },
